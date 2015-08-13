@@ -1,0 +1,12 @@
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\bin\Debug\QuadCamPC.exe
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\bin\Debug\QuadCamPC.pdb
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\bin\Debug\FTD2XX_NET.dll
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\obj\x86\Debug\QuadCamPC.exe
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\obj\x86\Debug\QuadCamPC.pdb
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\obj\x86\Debug\QuadCamPC.csprojResolveAssemblyReference.cache
+E:\MyStuff\Google Drive\QuadCamPC\QuadCamPC\obj\x86\Debug\QuadCamPC.exe
+E:\MyStuff\Google Drive\QuadCamPC\QuadCamPC\obj\x86\Debug\QuadCamPC.pdb
+E:\MyStuff\Google Drive\QuadCamPC\QuadCamPC\bin\Debug\QuadCamPC.exe
+E:\MyStuff\Google Drive\QuadCamPC\QuadCamPC\bin\Debug\QuadCamPC.pdb
+E:\MyStuff\Google Drive\QuadCamPC\QuadCamPC\bin\Debug\FTD2XX_NET.dll
+E:\MyStuff\Google Drive\QuadCamPC\QuadCamPC\obj\x86\Debug\QuadCamPC.csprojResolveAssemblyReference.cache

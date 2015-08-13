@@ -1,0 +1,5 @@
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\bin\Release\QuadCamPC.exe
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\bin\Release\QuadCamPC.pdb
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\bin\Release\FTD2XX_NET.dll
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\obj\x86\Release\QuadCamPC.exe
+C:\Users\Chris\Dropbox\Capstone\QuadCam\QuadCamPC\QuadCamPC\obj\x86\Release\QuadCamPC.pdb
