@@ -394,6 +394,11 @@ namespace QuadCamPC {
 
                         Console.Write("Ready\n");
 
+                        using (var client = new MailslotClient("QuadCam\\ImageReady"))
+                        {
+                            client.SendMessage("ImageReady");
+                        }
+
 
                     }
                     /*
