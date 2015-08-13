@@ -293,19 +293,17 @@ namespace QuadCamPC {
 
         // Crop full image into separate camera images
         // Utilizes AviSynth and MPC-HC media player to crop and render images
-        static void crop_image()
+        static void crop_image(string script_dir)
         {
-            string pwd = System.IO.Directory.GetCurrentDirectory();
-
-            // Find all script files within avisynth directory (two directory levels back from /bin/Debug/)
-            string[] scriptPaths = System.IO.Directory.GetFiles(pwd + @"\..\..\avisynth\", "crop*.avs");
+            // Find all script files within avisynth directory
+            string[] scriptPaths = System.IO.Directory.GetFiles(script_dir, "crop*.avs");
             
             // Run each script using MPC-HC
             Process proc;
             foreach (string script in scriptPaths)
             {
-                proc = System.Diagnostics.Process.Start(@"C:\Program Files (x86)\MPC-HC\mpc-hc.exe", script);
-                proc.Close();
+                // Run MPC-HC in minimized mode, do not steal window focus, and close after rendering
+                proc = System.Diagnostics.Process.Start(@"C:\Program Files (x86)\MPC-HC\mpc-hc.exe", script + @" /minimized /nofocus");
             }
         }
 
@@ -392,19 +390,21 @@ namespace QuadCamPC {
                         file2.Close();
                         Console.Write("Image Saved\n");
 
+                        string pwd = System.IO.Directory.GetCurrentDirectory(); // Executable directory (ie. ./bin/Debug/)
+
                         // Convert raw image data to bitmap
                         string strCmdText;
                         strCmdText = "1280 1024 c:\\usb_up888.dat c:\\usb_up888.bmp";
-                        System.Diagnostics.Process.Start("c:\\dat_to_bmp.exe", strCmdText);
+                        System.Diagnostics.Process.Start(pwd + @"\..\..\dat_to_bmp.exe", strCmdText);
 
                         /*
                         // Display bitmap using MS Paint
-                        strCmdText = "c:\\usb_up888.bmp";
-                        System.Diagnostics.Process.Start("C:\\windows\\system32\\mspaint.exe", strCmdText);
+                        System.Diagnostics.Process.Start(@"C:\windows\system32\mspaint.exe", @"c:\usb_up888.bmp");
                         */
 
                         // Crop bitmap into separate camera images
-                        crop_image();
+                        // (script directory is two levels back from pwd)
+                        crop_image(pwd + @"\..\..\avisynth\");
 
                         Console.Write("Ready\n");
 
@@ -491,7 +491,6 @@ namespace QuadCamPC {
         }
 
         static void Main(string[] args) {
-            int c, i;
             bool isRunning;
             byte[] writeData = new byte[256];
             UInt32 nWriteBytes = 0;
