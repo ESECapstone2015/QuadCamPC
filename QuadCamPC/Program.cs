@@ -53,7 +53,6 @@ namespace QuadCamPC {
             SetMode(true);
         }
 
-
         static String GetQuadCamSerial(UInt32 ftdiDeviceCount) {
 
             // Allocate storage for device info list
@@ -73,7 +72,6 @@ namespace QuadCamPC {
             }
             return "";
         }
-
 
 
         // Wait until at least one QuadCam is attached
@@ -139,7 +137,6 @@ namespace QuadCamPC {
             return "";
         }
 
-
         public static void Initialize() {
             String quadcam_serial;
             while ( true ) {
@@ -160,8 +157,6 @@ namespace QuadCamPC {
             // ftStatus = FtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0, 0);
             ftStatus = Program.ftdiDevice.SetTimeouts(90, 200);
         }
-
-
 
 
         static bool is_frame = false;
@@ -190,7 +185,6 @@ namespace QuadCamPC {
         // up888 - unpacked RGB888: flat array, 3 bytes per pixel
 
 
-
         static UInt32 conv_565_to_888(UInt32 rgb565) {
             UInt32 rgb888;
             UInt32 r, g, b;
@@ -205,7 +199,6 @@ namespace QuadCamPC {
             rgb888 = ((r << 16) & 0x00FF0000) | ((g << 8) & 0x0000FF00) | ((b << 0) & 0x000000FF);
             return rgb888;
         }
-
 
         static void up565_to_p565(byte[] up565, UInt32[,] p565) {
             int i = 0;
@@ -254,7 +247,6 @@ namespace QuadCamPC {
 
         }
 
-
         static void collate_frame(byte[] raw, byte[] up565) {
             int i = 0;
             int x, y;
@@ -273,7 +265,6 @@ namespace QuadCamPC {
             }
         }
 
-
         static bool check_key(char c, String key, ref int i) {
             if ( c == key[i] ) {
                 ++i;
@@ -288,7 +279,6 @@ namespace QuadCamPC {
             return false;
         }
 
-
         static bool check_frame_start(char c) {
             return check_key(c, frame_start_key, ref frame_start_i);
         }
@@ -301,6 +291,23 @@ namespace QuadCamPC {
             return check_key(c, sync_key, ref sync_i);
         }
 
+        // Crop full image into separate camera images
+        // Utilizes AviSynth and MPC-HC media player to crop and render images
+        static void crop_image()
+        {
+            string pwd = System.IO.Directory.GetCurrentDirectory();
+
+            // Find all script files within avisynth directory (two directory levels back from /bin/Debug/)
+            string[] scriptPaths = System.IO.Directory.GetFiles(pwd + @"\..\..\avisynth\", "crop*.avs");
+            
+            // Run each script using MPC-HC
+            Process proc;
+            foreach (string script in scriptPaths)
+            {
+                proc = System.Diagnostics.Process.Start(@"C:\Program Files (x86)\MPC-HC\mpc-hc.exe", script);
+                proc.Close();
+            }
+        }
 
         static Stopwatch stopwatch = new Stopwatch();
 
@@ -385,22 +392,32 @@ namespace QuadCamPC {
                         file2.Close();
                         Console.Write("Image Saved\n");
 
+                        // Convert raw image data to bitmap
                         string strCmdText;
                         strCmdText = "1280 1024 c:\\usb_up888.dat c:\\usb_up888.bmp";
                         System.Diagnostics.Process.Start("c:\\dat_to_bmp.exe", strCmdText);
 
+                        /*
+                        // Display bitmap using MS Paint
                         strCmdText = "c:\\usb_up888.bmp";
                         System.Diagnostics.Process.Start("C:\\windows\\system32\\mspaint.exe", strCmdText);
+                        */
+
+                        // Crop bitmap into separate camera images
+                        crop_image();
 
                         Console.Write("Ready\n");
 
-
+                        using (var client = new MailslotClient("QuadCam\\ImageReady"))
+                        {
+                            client.SendMessage("ImageReady");
+                        }
                     }
                     /*
                     if ( check_sync((char)readData[i]) ) {
                         SetSyncMode();
                     }
-                     * */
+                    */
                 }
 
                 if ( !is_frame && !frame_end ) {
@@ -408,12 +425,8 @@ namespace QuadCamPC {
                 }
                 line = "";
             }
-
-
-
-
-
         }
+
         public static void Write(FTDI FtdiDevice, byte[] vals, UInt32 nWriteBytes) {
             FTDI.FT_STATUS ftStatus = FTDI.FT_STATUS.FT_OK;
             UInt32 nBytesWritten = 0;
@@ -476,7 +489,6 @@ namespace QuadCamPC {
             }
             return 0;
         }
-
 
         static void Main(string[] args) {
             int c, i;
