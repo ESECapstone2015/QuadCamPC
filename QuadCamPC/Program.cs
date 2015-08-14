@@ -363,7 +363,6 @@ namespace QuadCamPC {
                         Console.Write("Frame Start\n"); 
                         stopwatch.Reset();
                         stopwatch.Start();
-
                     }
 
                     frame_end = check_frame_end((char)readData[i]);
@@ -377,29 +376,32 @@ namespace QuadCamPC {
                         frame_raw_i = 0;
                         up565_to_up888(frame_rgb565, frame_rgb888);
 
-                        System.IO.StreamWriter file1 = new System.IO.StreamWriter("c:\\usb_p565.dat");
+                        string pwd = System.IO.Directory.GetCurrentDirectory(); // Executable directory (ie. ./bin/Debug/)
+
+                        // Write unpacked RGB565 format
+                        System.IO.StreamWriter file1 = new System.IO.StreamWriter(pwd + @"\usb_up565.dat");
                         for ( i = 0; i < 2 * 1024 * 1280; ++i ) {
                             file1.Write(frame_rgb565[i]);
                         }
                         file1.Close();
 
-                        System.IO.BinaryWriter file2 = new System.IO.BinaryWriter(new System.IO.FileStream("c:\\usb_up888.dat", System.IO.FileMode.Create));
+                        // Write unpacked RGB888 format
+                        System.IO.BinaryWriter file2 = new System.IO.BinaryWriter(new System.IO.FileStream(pwd + @"\usb_up888.dat", System.IO.FileMode.Create));
                         for ( i = 0; i < 3 * 1024 * 1280; ++i ) {
                             file2.Write (frame_rgb888[i]);
                         }
                         file2.Close();
+
                         Console.Write("Image Saved\n");
 
-                        string pwd = System.IO.Directory.GetCurrentDirectory(); // Executable directory (ie. ./bin/Debug/)
-
-                        // Convert raw image data to bitmap
+                        // Convert raw image data to bitmap, 1280x1024 res
                         string strCmdText;
-                        strCmdText = "1280 1024 c:\\usb_up888.dat c:\\usb_up888.bmp";
+                        strCmdText = "1280 1024 " + pwd + @"\usb_up888.dat " + pwd + @"\usb_up888.bmp";
                         System.Diagnostics.Process.Start(pwd + @"\..\..\dat_to_bmp.exe", strCmdText);
 
                         /*
                         // Display bitmap using MS Paint
-                        System.Diagnostics.Process.Start(@"C:\windows\system32\mspaint.exe", @"c:\usb_up888.bmp");
+                        System.Diagnostics.Process.Start(@"C:\windows\system32\mspaint.exe", pwd + @"\usb_up888.bmp");
                         */
 
                         // Crop bitmap into separate camera images
