@@ -495,7 +495,8 @@ namespace QuadCamPC {
             byte[] writeData = new byte[256];
             UInt32 nWriteBytes = 0;
 
-
+            Console.WriteLine(System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + " v" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
+            Console.WriteLine("");
             Console.WriteLine("Cameras");
             Console.WriteLine("");
             Console.WriteLine("  a  Disable CC1");
