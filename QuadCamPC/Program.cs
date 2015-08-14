@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Diagnostics;
+using System.Drawing;   // For image manipulation
 
 using FTD2XX_NET;
 
@@ -291,19 +292,33 @@ namespace QuadCamPC {
             return check_key(c, sync_key, ref sync_i);
         }
 
-        // Crop full image into separate camera images
-        // Utilizes AviSynth and MPC-HC media player to crop and render images
-        static void crop_image(string script_dir)
+        // Split full image into separate camera images
+        static void split_image(Image img, string dst_dir)
         {
-            // Find all script files within avisynth directory
-            string[] scriptPaths = System.IO.Directory.GetFiles(script_dir, "crop*.avs");
-            
-            // Run each script using MPC-HC
-            Process proc;
-            foreach (string script in scriptPaths)
+            // Crop areas for each camera image + text banner
+            Rectangle cc1 = new Rectangle(0, 0, 640, 480);          // Top left
+            Rectangle cc2 = new Rectangle(640, 0, 640, 480);        // Top right
+            Rectangle cc3 = new Rectangle(640, 480, 640, 480);      // Bottom right
+            Rectangle cc4 = new Rectangle(0, 480, 640, 480);        // Bottom left
+            Rectangle txt = new Rectangle(0, 480+480, 1280, 64);    // Bottom banner
+
+            Rectangle[] cropAreas = { cc1, cc2, cc3, cc4, txt };
+
+            // Filenames for each separated image, same order as cropAreas[]
+            string[] names = { "cam1", "cam2", "cam3", "cam4", "txt" };
+
+            // Apply each crop area to full bitmap image
+            int i = 0;
+            foreach (Rectangle rect in cropAreas)
             {
-                // Run MPC-HC in minimized mode, do not steal window focus, and close after rendering
-                proc = System.Diagnostics.Process.Start(@"C:\Program Files (x86)\MPC-HC\mpc-hc.exe", script + @" /minimized /nofocus");
+                Bitmap bmpImage = new Bitmap(rect.Width, rect.Height);
+                Graphics gfx = Graphics.FromImage(bmpImage);
+                gfx.DrawImage(img, -rect.X, -rect.Y);
+
+                // Save as png
+                bmpImage.Save(dst_dir + @"\" + names[i] + ".png", System.Drawing.Imaging.ImageFormat.Png);
+
+                i++;
             }
         }
 
@@ -405,8 +420,8 @@ namespace QuadCamPC {
                         */
 
                         // Crop bitmap into separate camera images
-                        // (script directory is two levels back from pwd)
-                        crop_image(pwd + @"\..\..\avisynth\");
+                        Image srcImage = Image.FromFile(pwd + @"\usb_up888.bmp");
+                        split_image(srcImage, pwd);
 
                         Console.Write("Ready\n");
 
