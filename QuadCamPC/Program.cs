@@ -412,7 +412,8 @@ namespace QuadCamPC {
                         // Convert raw image data to bitmap, 1280x1024 res
                         string strCmdText;
                         strCmdText = "1280 1024 " + pwd + @"\usb_up888.dat " + pwd + @"\usb_up888.bmp";
-                        System.Diagnostics.Process.Start(pwd + @"\..\..\dat_to_bmp.exe", strCmdText);
+                        Process dat_to_bmp = System.Diagnostics.Process.Start(pwd + @"\..\..\dat_to_bmp.exe", strCmdText);
+                        dat_to_bmp.WaitForExit(); // Must wait for conversion to finish
 
                         /*
                         // Display bitmap using MS Paint
@@ -425,10 +426,12 @@ namespace QuadCamPC {
 
                         Console.Write("Ready\n");
 
+                        /* Mailslot functionality not yet working - 2015-08-18
                         using (var client = new MailslotClient("QuadCam\\ImageReady"))
                         {
                             client.SendMessage("ImageReady");
                         }
+                        */
                     }
                     /*
                     if ( check_sync((char)readData[i]) ) {
